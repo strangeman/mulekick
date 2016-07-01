@@ -27,6 +27,10 @@ func WriteJSON(w http.ResponseWriter, code int, out interface{}) {
 	}
 }
 
+func PongHandler(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("pong"))
+}
+
 // enables middleware
 type Router struct {
 	*mux.Router
