@@ -15,25 +15,25 @@ As the name suggests, `mule-kick` gives your router (gorilla/mux in this case) p
 
 ## Demo usage
 
-```
-	r := mulekick.NewRouter(mux.NewRouter(), corsMiddleware)
-	r.NotFoundHandler = http.HandlerFunc(notFoundHandler)
+```go
+r := mulekick.NewRouter(mux.NewRouter(), corsMiddleware)
+r.NotFoundHandler = http.HandlerFunc(notFoundHandler)
 
-	r.Get("/ping", mulekick.PongHandler)
+r.Get("/ping", mulekick.PongHandler)
 
-	// Authentication
-	func(api mulekick.Router) {
-		api.Post("/password", login)
-		api.Post("/register", signup)
-	}(r.Group("/auth"))
+// Authentication
+func(api mulekick.Router) {
+	api.Post("/password", login)
+	api.Post("/register", signup)
+}(r.Group("/auth"))
 
-	// Limited to requests with sessions
-	api := mulekick.NewRouter(r.Router, corsMiddleware, secureMiddleware)
+// Limited to requests with sessions
+api := mulekick.NewRouter(r.Router, corsMiddleware, secureMiddleware)
 
-	// Fetch user
-	api.Get("/user", getUser)
-	// Update user details
-	api.Post("/user", updateUser)
-	// Update user password
-	api.Post("/user/password", updateUserPassword)
+// Fetch user
+api.Get("/user", getUser)
+// Update user details
+api.Post("/user", updateUser)
+// Update user password
+api.Post("/user/password", updateUserPassword)
 ```
