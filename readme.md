@@ -7,12 +7,13 @@ note: this package could've been called `wunderwaffe`.. But `mulekick` seems mos
 
 As the name suggests, `mule-kick` gives your router (gorilla/mux in this case) power.
 
-Features:
+## Features
+
 - Middleware
 - Convenience `.get`, `.post`, ...
 - Sub-routing, sub-middleware declarations
 
-Excerpt from sample application:
+## Demo usage
 
 ```
 	r := mulekick.NewRouter(mux.NewRouter(), corsMiddleware)
