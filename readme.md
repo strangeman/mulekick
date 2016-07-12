@@ -17,8 +17,8 @@ As the name suggests, `mule-kick` gives your router (gorilla/mux in this case) p
 ## Demo usage
 
 ```go
-r := mulekick.NewRouter(mux.NewRouter(), corsMiddleware)
-r.NotFoundHandler = http.HandlerFunc(notFoundHandler)
+r := mulekick.New(mux.NewRouter(), mulekick.CorsMiddleware)
+r.NotFoundHandler = http.HandlerFunc(mulekick.NotFoundHandler)
 
 r.Get("/ping", mulekick.PongHandler)
 
@@ -29,7 +29,7 @@ func(api mulekick.Router) {
 }(r.Group("/auth"))
 
 // Limited to requests with sessions
-api := mulekick.NewRouter(r.Router, corsMiddleware, secureMiddleware)
+api := mulekick.New(r.Router, mulekick.CorsMiddleware, secureMiddleware)
 
 // Fetch user
 api.Get("/user", getUser)
