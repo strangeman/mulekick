@@ -2,6 +2,7 @@ package mulekick
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/gorilla/mux"
@@ -60,8 +61,13 @@ func (r Router) Delete(endpoint string, middleware ...http.HandlerFunc) *mux.Rou
 	return r.Handle(endpoint, middleware...).Methods("DELETE")
 }
 
-func (r Router) Handle(endpoint string, middleware ...http.HandlerFunc) *mux.Route {
-	middleware = append(r.middleware, middleware...)
+func (r Router) Handle(endpoint string, mw ...http.HandlerFunc) *mux.Route {
+	middleware := make([]http.HandlerFunc, len(r.middleware))
+	for i, m := range r.middleware {
+		middleware[i] = m
+	}
+
+	middleware = append(middleware, mw...)
 
 	route := r.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
 		wr := NewResponseWriter(w)
@@ -87,4 +93,5 @@ func (r Router) Group(str string, middleware ...http.HandlerFunc) Router {
 
 func (r *Router) Use(middleware ...http.HandlerFunc) {
 	r.middleware = append(r.middleware, middleware...)
+	fmt.Println("Use xyz")
 }
