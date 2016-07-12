@@ -7,7 +7,6 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// enables middleware
 type Router struct {
 	*mux.Router
 	middleware []http.HandlerFunc
@@ -54,11 +53,13 @@ func (r Router) Handle(endpoint string, mw ...http.HandlerFunc) *mux.Route {
 	return route
 }
 
+// Group creates a new sub-router, enabling you to group handlers
 func (r Router) Group(str string, middleware ...http.HandlerFunc) Router {
 	middleware = append(r.middleware, middleware...)
 	return New(r.PathPrefix(str).Subrouter(), middleware...)
 }
 
+// Use function adds middleware to the router for calls
 func (r *Router) Use(middleware ...http.HandlerFunc) {
 	r.middleware = append(r.middleware, middleware...)
 }
