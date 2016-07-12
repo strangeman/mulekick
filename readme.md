@@ -1,4 +1,5 @@
-# MULE-KICK
+![Imgur](http://i.imgur.com/S97Ecpr.png)
+
 Native http mux perk
 
 > Legend tells us of a man, a hero in a tortured land, where Señoritas lived in fear. Their lonely nights in deep despair, he was EL BURRO! (Hee-Haw, Hee-Haw). Across the fields, across the plains. He ran so fast he dodged the rain. He was El Burro! He hurried in to save the day, gun in hand, and thrice they say. He was strong like a Mule, he was stubborn like a Mule, he even kicked like a Mule, El Burro! (El Burro!). A man of equal soul they say. But some men more, it's just the way! He was El Burro! He was EL BURRO! EL BURRO!
