@@ -1,7 +1,9 @@
 package mulekick
 
 import (
+	"fmt"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gorilla/mux"
@@ -9,6 +11,7 @@ import (
 
 type Router struct {
 	*mux.Router
+	route      string
 	middleware []http.HandlerFunc
 }
 
@@ -28,6 +31,14 @@ func (r Router) Delete(endpoint string, middleware ...http.HandlerFunc) *mux.Rou
 	return r.Handle(endpoint, middleware...).Methods("DELETE")
 }
 
+func (r Router) Patch(endpoint string, middleware ...http.HandlerFunc) *mux.Route {
+	return r.Handle(endpoint, middleware...).Methods("PATCH")
+}
+
+func (r Router) Options(endpoint string, middleware ...http.HandlerFunc) *mux.Route {
+	return r.Handle(endpoint, middleware...).Methods("OPTIONS")
+}
+
 func (r Router) Handle(endpoint string, mw ...http.HandlerFunc) *mux.Route {
 	middleware := make([]http.HandlerFunc, len(r.middleware))
 	for i, m := range r.middleware {
@@ -35,6 +46,10 @@ func (r Router) Handle(endpoint string, mw ...http.HandlerFunc) *mux.Route {
 	}
 
 	middleware = append(middleware, mw...)
+
+	if os.Getenv("ENV") == "debug" {
+		fmt.Printf("%v%v (%d handlers)\n", r.route, endpoint, len(middleware))
+	}
 
 	route := r.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
 		wr := &ResponseWriter{w, false, http.StatusOK, time.Now()}
@@ -56,7 +71,10 @@ func (r Router) Handle(endpoint string, mw ...http.HandlerFunc) *mux.Route {
 // Group creates a new sub-router, enabling you to group handlers
 func (r Router) Group(str string, middleware ...http.HandlerFunc) Router {
 	middleware = append(r.middleware, middleware...)
-	return New(r.PathPrefix(str).Subrouter(), middleware...)
+
+	newRouter := New(r.PathPrefix(str).Subrouter(), middleware...)
+	newRouter.route = r.route + str
+	return newRouter
 }
 
 // Use function adds middleware to the router for calls
