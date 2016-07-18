@@ -42,16 +42,17 @@ func (r Router) Options(endpoint string, middleware ...http.HandlerFunc) *mux.Ro
 }
 
 func (r Router) Handle(endpoint string, mw ...http.HandlerFunc) *mux.Route {
-	if r.parent != nil && len(endpoint) == 0 {
-		return r.parent.Handle(r.groupRoute, mw...)
-	}
-
 	middleware := make([]http.HandlerFunc, len(r.middleware))
 	for i, m := range r.middleware {
 		middleware[i] = m
 	}
 
 	middleware = append(middleware, mw...)
+
+	if r.parent != nil && len(endpoint) == 0 {
+		middleware := middleware[len(r.parent.middleware):]
+		return r.parent.Handle(r.groupRoute, middleware...)
+	}
 
 	if os.Getenv("ENV") == "debug" {
 		fmt.Printf("%v%v (%d handlers)\n", r.completeRoute, endpoint, len(middleware))
