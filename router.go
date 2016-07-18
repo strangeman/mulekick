@@ -11,8 +11,10 @@ import (
 
 type Router struct {
 	*mux.Router
-	route      string
-	middleware []http.HandlerFunc
+	completeRoute string
+	groupRoute    string
+	parent        *Router
+	middleware    []http.HandlerFunc
 }
 
 func (r Router) Get(endpoint string, middleware ...http.HandlerFunc) *mux.Route {
@@ -40,6 +42,10 @@ func (r Router) Options(endpoint string, middleware ...http.HandlerFunc) *mux.Ro
 }
 
 func (r Router) Handle(endpoint string, mw ...http.HandlerFunc) *mux.Route {
+	if r.parent != nil && len(endpoint) == 0 {
+		return r.parent.Handle(r.groupRoute, mw...)
+	}
+
 	middleware := make([]http.HandlerFunc, len(r.middleware))
 	for i, m := range r.middleware {
 		middleware[i] = m
@@ -48,7 +54,7 @@ func (r Router) Handle(endpoint string, mw ...http.HandlerFunc) *mux.Route {
 	middleware = append(middleware, mw...)
 
 	if os.Getenv("ENV") == "debug" {
-		fmt.Printf("%v%v (%d handlers)\n", r.route, endpoint, len(middleware))
+		fmt.Printf("%v%v (%d handlers)\n", r.completeRoute, endpoint, len(middleware))
 	}
 
 	route := r.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
@@ -73,7 +79,9 @@ func (r Router) Group(str string, middleware ...http.HandlerFunc) Router {
 	middleware = append(r.middleware, middleware...)
 
 	newRouter := New(r.PathPrefix(str).Subrouter(), middleware...)
-	newRouter.route = r.route + str
+	newRouter.completeRoute = r.completeRoute + str
+	newRouter.groupRoute = str
+	newRouter.parent = &r
 	return newRouter
 }
 
