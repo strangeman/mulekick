@@ -9,8 +9,12 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// IDEA: Generate swagger API docs based on the calls
+
 type Router struct {
 	*mux.Router
+
+	EnableLogging bool
 	completeRoute string
 	groupRoute    string
 	parent        *Router
@@ -58,18 +62,20 @@ func (r Router) Handle(endpoint string, mw ...http.HandlerFunc) *mux.Route {
 		fmt.Printf("%v%v (%d handlers)\n", r.completeRoute, endpoint, len(middleware))
 	}
 
-	route := r.HandleFunc(endpoint, func(w http.ResponseWriter, r *http.Request) {
+	route := r.HandleFunc(endpoint, func(w http.ResponseWriter, req *http.Request) {
 		wr := &ResponseWriter{w, false, http.StatusOK, time.Now()}
 
 		for _, m := range middleware {
-			m(wr, r)
+			m(wr, req)
 
 			if wr.responseWritten {
 				break
 			}
 		}
 
-		wr.LogMiddleware(r)
+		if r.EnableLogging {
+			wr.LogMiddleware(req)
+		}
 	})
 
 	return route
@@ -83,6 +89,7 @@ func (r Router) Group(str string, middleware ...http.HandlerFunc) Router {
 	newRouter.completeRoute = r.completeRoute + str
 	newRouter.groupRoute = str
 	newRouter.parent = &r
+	newRouter.EnableLogging = r.EnableLogging
 	return newRouter
 }
 

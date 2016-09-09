@@ -11,8 +11,9 @@ type H map[string]interface{}
 
 func New(r *mux.Router, middleware ...http.HandlerFunc) Router {
 	return Router{
-		Router:     r,
-		middleware: middleware,
+		Router:        r,
+		middleware:    middleware,
+		EnableLogging: true,
 	}
 }
 
