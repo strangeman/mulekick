@@ -2,6 +2,9 @@ package mulekick
 
 // fake response writer wrapper to tell us when middleware writes
 import (
+	"bufio"
+	"errors"
+	"net"
 	"net/http"
 	"time"
 )
@@ -26,4 +29,14 @@ func (wr *ResponseWriter) WriteHeader(header int) {
 	wr.responseWritten = true
 	wr.statusCode = header
 	wr.ResponseWriter.WriteHeader(header)
+}
+
+func (wr *ResponseWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {
+	wr.responseWritten = true
+
+	if hijacker, ok := wr.ResponseWriter.(http.Hijacker); ok {
+		return hijacker.Hijack()
+	}
+
+	return nil, nil, errors.New("mulekick: response does not implement http.Hijacker")
 }
