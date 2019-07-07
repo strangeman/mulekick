@@ -1,6 +1,8 @@
+# DISCLAIMER: This package was previously owned by [CastawayLabs LLC](https://github.com/CastawayLabs) and its current license status is unclear. I just pushed it back to github from my GOPATH
+
 ![Imgur](http://i.imgur.com/S97Ecpr.png)
 
-[![GoDoc](https://godoc.org/github.com/CastawayLabs/mulekick?status.png)](https://godoc.org/github.com/CastawayLabs/mulekick)
+[![GoDoc](https://godoc.org/github.com/strangeman/mulekick?status.png)](https://godoc.org/github.com/strangeman/mulekick)
 
 Native http mux perk
 
